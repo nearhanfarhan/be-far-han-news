@@ -30,4 +30,16 @@ describe("far-han-news tests", ()=> {
 
         })
     })
+    describe("/api", () => {
+        test("GET 200: should return an object describing all available endpoints", () => {
+            return request(app).get("/api").expect(200).then(({body})=>{
+                const endpoints = Object.keys(body).slice(1) //exclude /api endpoint
+                for (i=0; i<endpoints.length; i++){
+                    expect(body[endpoints[i]]).toHaveProperty("description")
+                    expect(body[endpoints[i]]).toHaveProperty("queries")
+                    expect(body[endpoints[i]]).toHaveProperty("exampleResponse")
+                }
+            })
+        })
+    })
 })
