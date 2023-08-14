@@ -14,13 +14,11 @@ beforeEach(() => {
 
 describe("far-han-news tests", ()=> {
     describe("/api/topics", () => {
-        test("GET 200: returns with a status of 200", () => {
-            return request(app).get("/api/topics").expect(200)
-        })
         test("GET 200: should return with an array of topics", () => {
             return request(app).get("/api/topics").expect(200).then(({body})=> {
                 const {topics} = body
                 expect(topics).toEqual(expect.any(Array))
+                expect(topics.length).toBe(3)
                 topics.forEach((topic)=>{
                     expect(topic).toHaveProperty("slug", expect.any(String))
                     expect(topic).toHaveProperty("description", expect.any(String))

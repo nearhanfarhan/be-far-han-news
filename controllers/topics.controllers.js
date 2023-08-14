@@ -1,7 +1,7 @@
-const { fetchTopics } = require("../models/topics.models");
+const { fetchAllTopics } = require("../models/topics.models");
 
-exports.getTopics = (request, response, next) => {
-  fetchTopics()
+exports.getAllTopics = (request, response, next) => {
+  fetchAllTopics()
     .then((topics) => {
       response.status(200).send({topics : topics});
     })

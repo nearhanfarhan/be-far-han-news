@@ -1,8 +1,8 @@
 const express = require("express");
-const { getTopics } = require("./controllers/topics.controllers");
+const { getAllTopics } = require("./controllers/topics.controllers");
 const app = express()
 
-app.get("/api/topics", getTopics)
+app.get("/api/topics", getAllTopics)
 
 app.use((err, request, response, next) => {
     console.log(err);
