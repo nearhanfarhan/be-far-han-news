@@ -1,3 +1,4 @@
+
 const {
   fetchArticleById,
   fetchAllArticles,
@@ -23,3 +24,4 @@ exports.getAllArticles = (request, response, next) => {
       next(err);
     });
 };
+
