@@ -24,10 +24,24 @@ describe("far-han-news tests", ()=> {
                     expect(topic).toHaveProperty("description", expect.any(String))
                 })
             })
+        })   
+    })
+    describe("ALL /api/badpath", () => {
+        test("GET 404: should return a custom error for a path that does not exist", () => {
+            return request(app).get("/api/teepics").expect(404).then(({body}) => {
+                const {msg} = body
+                expect(msg).toBe("Not found")
+            })
         })
-        test("GET 404: should return an error for a path that does not exist", () => {
-            return request(app).get("/api/teepics").expect(404)
-
+    })
+    describe("/api/articles", () => {
+        test("GET 200: should respond with array of all article objects with desired columns sorted in descending order by date", () => {
+            return request(app).get("/api/articles").expect(200).then(({body}) => {
+                const {articles} = body
+                expect(articles.length).toBe(13)
+                expect(articles).toBeSortedBy("created_at", {descending : true})
+                
+            })
         })
     })
 })
