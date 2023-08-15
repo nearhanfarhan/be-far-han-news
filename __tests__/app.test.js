@@ -143,8 +143,71 @@ describe("far-han-news tests", () => {
         .get(`/api/articles/${article_id}/comments`)
         .expect(200)
         .then(({ body }) => {
-          const {comments} = body
-          expect(comments.length).toBe(0)
+          const { comments } = body;
+          expect(comments.length).toBe(0);
+        });
+    });
+    test("POST 201: should create a comment on the associated article for an existing username and respond with the posted comment", () => {
+      const article_id = 7;
+      const commentToPost = {
+        author: "butter_bridge",
+        body: "This is the greatest comment of all time",
+      };
+      return request(app)
+        .post(`/api/articles/${article_id}/comments`)
+        .send(commentToPost)
+        .expect(201)
+        .then(({ body }) => {
+          const { comment } = body;
+          expect(comment).toHaveProperty("article_id", 7);
+          expect(comment).toHaveProperty(
+            "body",
+            "This is the greatest comment of all time"
+          );
+          expect(comment).toHaveProperty("author", "butter_bridge");
+          expect(comment).toHaveProperty("comment_id", 19);
+          expect(comment).toHaveProperty("votes", 0);
+          expect(comment).toHaveProperty("created_at", expect.any(String));
+        });
+    });
+    test("POST 404: responds with an error message when passed a username which does not exist on the database", () => {
+      const article_id = 4;
+      const commentToPost = {
+        author: "nearhanfarhan",
+        body: "This is the greatest comment of all time",
+      };
+      return request(app)
+        .post(`/api/articles/${article_id}/comments`)
+        .send(commentToPost)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Username doesn't exist");
+        });
+    });
+    test("POST 400: should respond with error for incomplete comment object", () => {
+      const article_id = 3;
+      const commentToPost = {
+        body: "This is the greatest comment of all time",
+      };
+      return request(app)
+        .post(`/api/articles/${article_id}/comments`)
+        .send(commentToPost)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+    test("POST 400: should respond with error when given an invalid article_id", () => {
+      const article_id = "hello";
+      const commentToPost = {
+        body: "This is the greatest comment of all time",
+      };
+      return request(app)
+        .post(`/api/articles/${article_id}/comments`)
+        .send(commentToPost)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
         });
     });
     test("GET 404: should respond with error for article_id of valid type which does not exist", () => {
@@ -157,11 +220,14 @@ describe("far-han-news tests", () => {
         });
     });
     test("GET 400: should respond with an error for article_id of invalid type", () => {
-        const article_id="hello"
-        return request(app).get(`/api/articles/${article_id}/comments`).expect(400).then(({body})=>{
-            const {msg} = body
-            expect(msg).toBe("Bad request")
-        })
-    })
+      const article_id = "hello";
+      return request(app)
+        .get(`/api/articles/${article_id}/comments`)
+        .expect(400)
+        .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
 });

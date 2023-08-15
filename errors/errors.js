@@ -7,8 +7,10 @@ exports.handleCustomErrors = (err, request, response, next) => {
 };
 
 exports.handle400Errors = (err, request, response, next) => {
-  if (err.code === "22P02") {
+  if (err.code === "22P02"||err.code === "23502") {
     response.status(400).send({ msg: "Bad request" });
+  } else if (err.code === "23503") {
+    response.status(404).send({ msg: "Username doesn't exist" });
   } else {
     next(err);
   }
