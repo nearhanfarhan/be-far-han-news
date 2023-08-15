@@ -117,4 +117,51 @@ describe("far-han-news tests", () => {
         });
     });
   });
+  describe("/api/articles/:article_id/comments", () => {
+    test("GET 200: should respond with an array of comments for the given article_id with most recent comments first", () => {
+      const article_id = 1;
+      return request(app)
+        .get(`/api/articles/${article_id}/comments`)
+        .expect(200)
+        .then(({ body }) => {
+          const { comments } = body;
+          expect(comments.length).toBe(11);
+          expect(comments).toBeSortedBy("created_at", { descending: true });
+          comments.forEach((comment) => {
+            expect(comment).toHaveProperty("comment_id", expect.any(Number));
+            expect(comment).toHaveProperty("body", expect.any(String));
+            expect(comment).toHaveProperty("article_id", expect.any(Number));
+            expect(comment).toHaveProperty("author", expect.any(String));
+            expect(comment).toHaveProperty("votes", expect.any(Number));
+            expect(comment).toHaveProperty("created_at", expect.any(String));
+          });
+        });
+    });
+    test("GET 200: should respond with success and empty array for a valid article_id which does not have any comments", () => {
+      const article_id = 7; //article with 0 comments
+      return request(app)
+        .get(`/api/articles/${article_id}/comments`)
+        .expect(200)
+        .then(({ body }) => {
+          const {comments} = body
+          expect(comments.length).toBe(0)
+        });
+    });
+    test("GET 404: should respond with error for article_id of valid type which does not exist", () => {
+      const article_id = 9999;
+      return request(app)
+        .get(`/api/articles/${article_id}/comments`)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found");
+        });
+    });
+    test("GET 400: should respond with an error for article_id of invalid type", () => {
+        const article_id="hello"
+        return request(app).get(`/api/articles/${article_id}/comments`).expect(400).then(({body})=>{
+            const {msg} = body
+            expect(msg).toBe("Bad request")
+        })
+    })
+  });
 });
