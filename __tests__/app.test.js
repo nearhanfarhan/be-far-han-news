@@ -33,7 +33,7 @@ describe("far-han-news tests", () => {
       return request(app).get("/api/teepics").expect(404);
     });
   });
-  describe("/api/artiles/:article_id", () => {
+  describe("/api/articles/:article_id", () => {
     test("GET 200: should get a valid article by its ID", () => {
       return request(app)
         .get("/api/articles/2")
@@ -53,12 +53,12 @@ describe("far-han-news tests", () => {
           });
         });
     });
-    test("GET 400: should return an error when passed an non existent ID of the correct type", () => {
+    test("GET 404: should return an error when passed an non existent ID of the correct type", () => {
       return request(app)
         .get("/api/articles/9999")
-        .expect(400)
+        .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Bad request");
+          expect(body.msg).toBe("Not found");
         });
     });
   });
