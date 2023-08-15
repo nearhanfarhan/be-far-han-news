@@ -13,47 +13,58 @@ beforeEach(() => {
   return seed(testData);
 });
 
-
-describe("far-han-news tests", ()=> {
-    describe("/api/topics", () => {
-        test("GET 200: should return with an array of topics", () => {
-            return request(app).get("/api/topics").expect(200).then(({body})=> {
-                const {topics} = body
-                expect(topics).toEqual(expect.any(Array))
-                expect(topics.length).toBe(3)
-                topics.forEach((topic)=>{
-                    expect(topic).toHaveProperty("slug", expect.any(String))
-                    expect(topic).toHaveProperty("description", expect.any(String))
-                })
-            })
-        })   
-    })
-    describe("ALL /api/badpath", () => {
-        test("GET 404: should return a custom error for a path that does not exist", () => {
-            return request(app).get("/api/teepics").expect(404).then(({body}) => {
-                const {msg} = body
-                expect(msg).toBe("Not found")
-            })
-        })
-    })
-    describe("/api/articles", () => {
-        test("GET 200: should respond with array of all article objects with desired columns sorted in descending order by date", () => {
-            return request(app).get("/api/articles").expect(200).then(({body}) => {
-                const {articles} = body
-                expect(articles.length).toBe(13)
-                expect(articles).toBeSortedBy("created_at", {descending : true})
-                articles.forEach((article) => {
-                    expect(article).toHaveProperty("author", expect.any(String))
-                    expect(article).toHaveProperty("title", expect.any(String))
-                    expect(article).toHaveProperty("topic", expect.any(String))
-                    expect(article).toHaveProperty("created_at", expect.any(String))
-                    expect(article).toHaveProperty("votes", expect.any(Number))
-                    expect(article).toHaveProperty("article_img_url", expect.any(String))
-                    expect(article).toHaveProperty("comment_count", expect.any(String))
-                })
-            })
-        })
-    })
+describe("far-han-news tests", () => {
+  describe("/api/topics", () => {
+    test("GET 200: should return with an array of topics", () => {
+      return request(app)
+        .get("/api/topics")
+        .expect(200)
+        .then(({ body }) => {
+          const { topics } = body;
+          expect(topics).toEqual(expect.any(Array));
+          expect(topics.length).toBe(3);
+          topics.forEach((topic) => {
+            expect(topic).toHaveProperty("slug", expect.any(String));
+            expect(topic).toHaveProperty("description", expect.any(String));
+          });
+        });
+    });
+  });
+  describe("ALL /api/badpath", () => {
+    test("GET 404: should return a custom error for a path that does not exist", () => {
+      return request(app)
+        .get("/api/teepics")
+        .expect(404)
+        .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe("Not found");
+        });
+    });
+  });
+  describe("/api/articles", () => {
+    test("GET 200: should respond with array of all article objects with desired columns sorted in descending order by date", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          const { articles } = body;
+          expect(articles.length).toBe(13);
+          expect(articles).toBeSortedBy("created_at", { descending: true });
+          articles.forEach((article) => {
+            expect(article).toHaveProperty("author", expect.any(String));
+            expect(article).toHaveProperty("title", expect.any(String));
+            expect(article).toHaveProperty("topic", expect.any(String));
+            expect(article).toHaveProperty("created_at", expect.any(String));
+            expect(article).toHaveProperty("votes", expect.any(Number));
+            expect(article).toHaveProperty(
+              "article_img_url",
+              expect.any(String)
+            );
+            expect(article).toHaveProperty("comment_count", expect.any(String));
+          });
+        });
+    });
+  });
   describe("/api/articles/:article_id", () => {
     test("GET 200: should get a valid article by its ID", () => {
       return request(app)
@@ -82,25 +93,28 @@ describe("far-han-news tests", ()=> {
           expect(body.msg).toBe("Not found");
         });
     });
-  });
-  test("GET 400: should return an error when passed an ID of the incorrect type", () => {
-    return request(app)
-      .get("/api/articles/hello")
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Bad request");
-      });
+    test("GET 400: should return an error when passed an ID of the incorrect type", () => {
+      return request(app)
+        .get("/api/articles/hello")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
   });
   describe("/api", () => {
-        test("GET 200: should return an object describing all available endpoints", () => {
-            return request(app).get("/api").expect(200).then(({body})=>{
-                const endpoints = Object.keys(body).slice(1) //exclude /api endpoint
-                for (i=0; i<endpoints.length; i++){
-                    expect(body[endpoints[i]]).toHaveProperty("description")
-                    expect(body[endpoints[i]]).toHaveProperty("queries")
-                    expect(body[endpoints[i]]).toHaveProperty("exampleResponse")
-                }
-
-            })
-        })
+    test("GET 200: should return an object describing all available endpoints", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          const endpoints = Object.keys(body).slice(1); //exclude /api endpoint
+          for (i = 0; i < endpoints.length; i++) {
+            expect(body[endpoints[i]]).toHaveProperty("description");
+            expect(body[endpoints[i]]).toHaveProperty("queries");
+            expect(body[endpoints[i]]).toHaveProperty("exampleResponse");
+          }
+        });
+    });
+  });
 });

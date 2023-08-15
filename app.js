@@ -17,13 +17,14 @@ app.get("/api/topics", getAllTopics);
 
 app.get("/api/articles", getAllArticles);
 
-app.use((request, response) => {
-  response.status(404).send({ msg: "Not found" });
-});
-
 app.get("/api/articles/:article_id", getArticleById)
 
 app.get("/api", getEndpoints)
+
+
+app.use((request, response) => {
+  response.status(404).send({ msg: "Not found" });
+});
 
 app.use(handleCustomErrors)
 
