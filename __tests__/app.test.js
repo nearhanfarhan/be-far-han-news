@@ -85,6 +85,17 @@ describe("far-han-news tests", () => {
           });
         });
     });
+    test("PATCH 201: should update an article on article_id and respond with updated article", () => {
+      const article_id = 1;
+      const valueToUpdate = { inc_votes: 4 };
+      return request(app)
+        .patch(`/api/articles/${article_id}`)
+        .send(valueToUpdate)
+        .expect(201)
+        .then(({ body }) => {
+          console.log(body);
+        });
+    });
     test("GET 404: should return an error when passed an non existent ID of the correct type", () => {
       return request(app)
         .get("/api/articles/9999")
@@ -143,8 +154,8 @@ describe("far-han-news tests", () => {
         .get(`/api/articles/${article_id}/comments`)
         .expect(200)
         .then(({ body }) => {
-          const {comments} = body
-          expect(comments.length).toBe(0)
+          const { comments } = body;
+          expect(comments.length).toBe(0);
         });
     });
     test("GET 404: should respond with error for article_id of valid type which does not exist", () => {
@@ -157,11 +168,14 @@ describe("far-han-news tests", () => {
         });
     });
     test("GET 400: should respond with an error for article_id of invalid type", () => {
-        const article_id="hello"
-        return request(app).get(`/api/articles/${article_id}/comments`).expect(400).then(({body})=>{
-            const {msg} = body
-            expect(msg).toBe("Bad request")
-        })
-    })
+      const article_id = "hello";
+      return request(app)
+        .get(`/api/articles/${article_id}/comments`)
+        .expect(400)
+        .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
 });
