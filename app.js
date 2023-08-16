@@ -6,7 +6,7 @@ const { getAllArticles } = require("./controllers/articles.controllers");
 
 const { getArticleById } = require("./controllers/articles.controllers");
 
-const { handleCustomErrors, handle400Errors } = require("./errors/errors");
+const { handleCustomErrors, handle400Errors, handle404Errors } = require("./errors/errors");
 
 const { getEndpoints } = require("./controllers/api.controllers");
 const { getCommentsByArticle, postCommentsByArticle } = require("./controllers/comments.controllers");
@@ -34,6 +34,8 @@ app.use((request, response) => {
 app.use(handleCustomErrors)
 
 app.use(handle400Errors)
+
+app.use(handle404Errors)
 
 app.use((err, request, response, next) => {
   console.log(err);

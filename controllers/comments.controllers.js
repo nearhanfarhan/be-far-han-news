@@ -3,6 +3,7 @@ const {
   fetchCommentsByArticle,
   insertCommentsByArticle,
 } = require("../models/comments.models");
+const { fetchUser } = require("../models/users.models");
 
 exports.getCommentsByArticle = (request, response, next) => {
   const { article_id } = request.params;
@@ -25,9 +26,19 @@ exports.getCommentsByArticle = (request, response, next) => {
 exports.postCommentsByArticle = (request, response, next) => {
   const { author, body } = request.body;
   const { article_id } = request.params;
-  return insertCommentsByArticle(article_id, author, body).then((comment) => {
-    response.status(201).send({ comment: comment });
-  }).catch((err)=>{
-    next(err)
-  })
+  const promises = [
+    insertCommentsByArticle(article_id, author, body),
+    fetchUser(author),
+  ];
+  Promise.all(promises)
+    .then((promiseArray) => {
+      return promiseArray[0];
+    })
+    .then((comment) => {
+      response.status(201).send({ comment: comment });
+    })
+    .catch((err) => {
+      console.log(err)
+      next(err);
+    });
 };
