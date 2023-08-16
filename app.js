@@ -9,7 +9,8 @@ const { getArticleById } = require("./controllers/articles.controllers");
 const { handleCustomErrors, handle400Errors} = require("./errors/errors");
 
 const { getEndpoints } = require("./controllers/api.controllers");
-const { getCommentsByArticle, postCommentsByArticle } = require("./controllers/comments.controllers");
+
+const { getCommentsByArticle, postCommentsByArticle, deleteCommentById } = require("./controllers/comments.controllers");
 
 const app = express()
 
@@ -29,6 +30,8 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticle)
 app.post("/api/articles/:article_id/comments", postCommentsByArticle)
 
 app.patch("/api/articles/:article_id", patchArticleVotes)
+
+app.delete("/api/comments/:comment_id", deleteCommentById)
 
 
 app.use((request, response) => {
