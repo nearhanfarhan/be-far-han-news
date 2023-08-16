@@ -19,3 +19,11 @@ exports.fetchAllArticles = () => {
     return rows;
   });
 };
+
+exports.updateArticleVotes = (article_id, inc_votes) => {
+    const text = ("UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *")
+    const params = [inc_votes, article_id]
+    return db.query(text, params).then(({rows}) => {
+        return(rows[0])
+    })
+}

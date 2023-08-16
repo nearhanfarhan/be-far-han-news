@@ -101,7 +101,67 @@ describe("far-han-news tests", () => {
           expect(body.msg).toBe("Bad request");
         });
     });
+    test("PATCH 201: should update an article on article_id and respond with updated article", () => {
+      const article_id = 1;
+      const valueToUpdate = { inc_votes: 4 };
+      return request(app)
+        .patch(`/api/articles/${article_id}`)
+        .send(valueToUpdate)
+        .expect(201)
+        .then(({ body }) => {
+          const { article } = body;
+          expect(article).toMatchObject({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: "2020-07-09T20:11:00.000Z",
+            votes: 104,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          });
+        });
+    });
+    test("PATCH 404: should respond with an error for article_id of valid type which does not exist", () => {
+      const article_id = 9999;
+      const valueToUpdate = { inc_votes: 5 };
+      return request(app)
+        .patch(`/api/articles/${article_id}`)
+        .send(valueToUpdate)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found");
+        });
+    });
+    test("PATCH 400: should respond with an error for article_id of invalid type", () => {
+      const article_id = "hello";
+      const valueToUpdate = {
+        inc_votes: 10,
+      };
+      return request(app)
+        .patch(`/api/articles/${article_id}`)
+        .send(valueToUpdate)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+    test("PATCH 400: should respond with an error for an update value of invalid type", () => {
+      const article_id = 1;
+      const valueToUpdate = {
+        inc_votes: "banana?",
+      };
+      return request(app)
+        .patch(`/api/articles/${article_id}`)
+        .send(valueToUpdate)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
   });
+
   describe("/api", () => {
     test("GET 200: should return an object describing all available endpoints", () => {
       return request(app)
@@ -145,6 +205,7 @@ describe("far-han-news tests", () => {
         .then(({ body }) => {
           const { comments } = body;
           expect(comments.length).toBe(0);
+
         });
     });
     test("POST 201: should create a comment on the associated article for an existing username and respond with the posted comment", () => {
@@ -237,6 +298,7 @@ describe("far-han-news tests", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("Not found");
+
         });
     });
     test("GET 404: should respond with error for article_id of valid type which does not exist", () => {

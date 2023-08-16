@@ -2,7 +2,7 @@ const express = require("express");
 
 const { getAllTopics } = require("./controllers/topics.controllers");
 
-const { getAllArticles } = require("./controllers/articles.controllers");
+const { getAllArticles, patchArticleVotes } = require("./controllers/articles.controllers");
 
 const { getArticleById } = require("./controllers/articles.controllers");
 
@@ -25,7 +25,11 @@ app.get("/api", getEndpoints)
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticle)
 
+
 app.post("/api/articles/:article_id/comments", postCommentsByArticle)
+
+app.patch("/api/articles/:article_id", patchArticleVotes)
+
 
 app.use((request, response) => {
   response.status(404).send({ msg: "Not found" });
