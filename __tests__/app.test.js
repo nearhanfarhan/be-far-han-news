@@ -170,24 +170,24 @@ describe("far-han-news tests", () => {
           expect(comment).toHaveProperty("created_at", expect.any(String));
         });
     });
-    // test.only("POST 404: responds with an error message when passed a username which does not exist on the database", () => {
-    //   const article_id = 4;
-    //   const commentToPost = {
-    //     author: "nearhanfarhan",
-    //     body: "This is the greatest comment of all time",
-    //   };
-    //   return request(app)
-    //     .post(`/api/articles/${article_id}/comments`)
-    //     .send(commentToPost)
-    //     .expect(404)
-    //     .then(({ body }) => {
-    //       expect(body.msg).toBe("Username doesn't exist");
-    //     });
-    // });
-    test("POST 400: should respond with error for incomplete comment object", () => {
+    test("POST 404: responds with an error message when passed a username which does not exist on the database", () => {
+      const article_id = 4;
+      const commentToPost = {
+        author: "nearhanfarhan",
+        body: "This is the greatest comment of all time",
+      };
+      return request(app)
+        .post(`/api/articles/${article_id}/comments`)
+        .send(commentToPost)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Username doesn't exist");
+        });
+    });
+    test("POST 400: should respond with error for comment object missing a body", () => {
       const article_id = 3;
       const commentToPost = {
-        body: "This is the greatest comment of all time",
+        author: "butter_bridge",
       };
       return request(app)
         .post(`/api/articles/${article_id}/comments`)
@@ -197,6 +197,20 @@ describe("far-han-news tests", () => {
           expect(body.msg).toBe("Bad request");
         });
     });
+    test("POST 400: should respond with error for comment object missing a username", () => {
+      const article_id = 3;
+      const commentToPost = {
+        body: "butter_bridge",
+      };
+      return request(app)
+        .post(`/api/articles/${article_id}/comments`)
+        .send(commentToPost)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+
     test("POST 400: should respond with error when given an invalid article_id", () => {
       const article_id = "hello";
       const commentToPost = {
@@ -211,7 +225,7 @@ describe("far-han-news tests", () => {
           expect(body.msg).toBe("Bad request");
         });
     });
-    test.only("POST 404: should respond with an error when passed a non existent ID of valid type", () => {
+    test("POST 404: should respond with an error when passed a non existent ID of valid type", () => {
       const article_id = 9999;
       const commentToPost = {
         author: "butter_bridge",

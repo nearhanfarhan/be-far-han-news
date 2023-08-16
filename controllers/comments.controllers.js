@@ -27,18 +27,18 @@ exports.postCommentsByArticle = (request, response, next) => {
   const { author, body } = request.body;
   const { article_id } = request.params;
   const promises = [
+    fetchUser(author),    
+    fetchArticleById(article_id),
     insertCommentsByArticle(article_id, author, body),
-    fetchUser(author),
   ];
   Promise.all(promises)
     .then((promiseArray) => {
-      return promiseArray[0];
+      return promiseArray[2];
     })
     .then((comment) => {
       response.status(201).send({ comment: comment });
     })
     .catch((err) => {
-      console.log(err)
       next(err);
     });
 };

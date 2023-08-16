@@ -14,10 +14,3 @@ exports.handle400Errors = (err, request, response, next) => {
   }
 };
 
-exports.handle404Errors = (err, request, response, next) => {
-  if (err.code === "23503") {
-    response.status(404).send({ msg: "Not found" });
-  } else {
-    next(err);
-  }
-};
