@@ -1,7 +1,7 @@
 const db = require("../db/connection");
 
 exports.fetchArticleById = (article_id) => {
-  const text = "SELECT * FROM articles WHERE article_id = $1;";
+  const text = "SELECT articles.body, articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id)::INTEGER AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id;";
   const params = [article_id];
   return db.query(text, params).then(({ rows }) => {
     if (rows.length === 0) {
@@ -46,7 +46,7 @@ exports.fetchAllArticles = (topic, sort_by = "created_at", order = "desc") => {
   });
 };
 
-exports.updateArticleVotes = (article_id, inc_votes) => {
+exports.updateArticleVotesById = (article_id, inc_votes) => {
   const text =
     "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *";
   const params = [inc_votes, article_id];

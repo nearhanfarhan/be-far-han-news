@@ -153,6 +153,16 @@ describe("far-han-news tests", () => {
           });
         });
     });
+    test("GET 200: returned objects should contain comment_count as a column", () => {
+      return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article[0]).toHaveProperty("comment_count")
+      })
+
+    })
     test("GET 404: should return an error when passed an non existent ID of the correct type", () => {
       return request(app)
         .get("/api/articles/9999")

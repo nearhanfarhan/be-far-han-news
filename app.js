@@ -2,7 +2,7 @@ const express = require("express");
 
 const { getAllTopics } = require("./controllers/topics.controllers");
 
-const { getAllArticles, patchArticleVotes } = require("./controllers/articles.controllers");
+const { getAllArticles, patchArticleVotesById } = require("./controllers/articles.controllers");
 
 const { getArticleById } = require("./controllers/articles.controllers");
 
@@ -30,7 +30,7 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticle)
 
 app.post("/api/articles/:article_id/comments", postCommentsByArticle)
 
-app.patch("/api/articles/:article_id", patchArticleVotes)
+app.patch("/api/articles/:article_id", patchArticleVotesById)
 
 app.delete("/api/comments/:comment_id", deleteCommentById)
 
