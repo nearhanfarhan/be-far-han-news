@@ -140,7 +140,7 @@ describe("far-han-news tests", () => {
         .expect(200)
         .then(({ body }) => {
           const { article } = body;
-          expect(article[0]).toMatchObject({
+          expect(article).toMatchObject({
             article_id: 2,
             title: "Sony Vaio; or, The Laptop",
             topic: "mitch",
@@ -159,7 +159,7 @@ describe("far-han-news tests", () => {
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
-        expect(article[0]).toHaveProperty("comment_count")
+        expect(article).toHaveProperty("comment_count")
       })
 
     })
