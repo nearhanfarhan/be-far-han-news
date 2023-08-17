@@ -2,6 +2,7 @@ const { fetchArticleById } = require("../models/articles.models");
 const {
   fetchCommentsByArticle,
   insertCommentsByArticle,
+  removeCommentById,
 } = require("../models/comments.models");
 const { fetchUser } = require("../models/users.models");
 
@@ -27,7 +28,7 @@ exports.postCommentsByArticle = (request, response, next) => {
   const { author, body } = request.body;
   const { article_id } = request.params;
   const promises = [
-    fetchUser(author),    
+    fetchUser(author),
     fetchArticleById(article_id),
     insertCommentsByArticle(article_id, author, body),
   ];
@@ -37,6 +38,17 @@ exports.postCommentsByArticle = (request, response, next) => {
     })
     .then((comment) => {
       response.status(201).send({ comment: comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteCommentById = (request, response, next) => {
+  const { comment_id } = request.params;
+  removeCommentById(comment_id)
+    .then(() => {
+      response.status(204).send();
     })
     .catch((err) => {
       next(err);

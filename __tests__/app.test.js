@@ -14,6 +14,32 @@ beforeEach(() => {
 });
 
 describe("far-han-news tests", () => {
+  describe("/api", () => {
+    test("GET 200: should return an object describing all available endpoints", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          const endpoints = Object.keys(body).slice(1); //exclude /api endpoint
+          for (i = 0; i < endpoints.length; i++) {
+            expect(body[endpoints[i]]).toHaveProperty("description");
+            expect(body[endpoints[i]]).toHaveProperty("queries");
+            expect(body[endpoints[i]]).toHaveProperty("exampleResponse");
+          }
+        });
+    });
+  });
+  describe("ALL /api/badpath", () => {
+    test("GET 404: should return a custom error for a path that does not exist", () => {
+      return request(app)
+        .get("/api/teepics")
+        .expect(404)
+        .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe("Not found");
+        });
+    });
+  });
   describe("/api/topics", () => {
     test("GET 200: should return with an array of topics", () => {
       return request(app)
@@ -27,17 +53,6 @@ describe("far-han-news tests", () => {
             expect(topic).toHaveProperty("slug", expect.any(String));
             expect(topic).toHaveProperty("description", expect.any(String));
           });
-        });
-    });
-  });
-  describe("ALL /api/badpath", () => {
-    test("GET 404: should return a custom error for a path that does not exist", () => {
-      return request(app)
-        .get("/api/teepics")
-        .expect(404)
-        .then(({ body }) => {
-          const { msg } = body;
-          expect(msg).toBe("Not found");
         });
     });
   });
@@ -161,22 +176,6 @@ describe("far-han-news tests", () => {
         });
     });
   });
-
-  describe("/api", () => {
-    test("GET 200: should return an object describing all available endpoints", () => {
-      return request(app)
-        .get("/api")
-        .expect(200)
-        .then(({ body }) => {
-          const endpoints = Object.keys(body).slice(1); //exclude /api endpoint
-          for (i = 0; i < endpoints.length; i++) {
-            expect(body[endpoints[i]]).toHaveProperty("description");
-            expect(body[endpoints[i]]).toHaveProperty("queries");
-            expect(body[endpoints[i]]).toHaveProperty("exampleResponse");
-          }
-        });
-    });
-  });
   describe("/api/articles/:article_id/comments", () => {
     test("GET 200: should respond with an array of comments for the given article_id with most recent comments first", () => {
       const article_id = 1;
@@ -205,7 +204,6 @@ describe("far-han-news tests", () => {
         .then(({ body }) => {
           const { comments } = body;
           expect(comments.length).toBe(0);
-
         });
     });
     test("POST 201: should create a comment on the associated article for an existing username and respond with the posted comment", () => {
@@ -298,7 +296,6 @@ describe("far-han-news tests", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("Not found");
-
         });
     });
     test("GET 404: should respond with error for article_id of valid type which does not exist", () => {
@@ -318,6 +315,46 @@ describe("far-han-news tests", () => {
         .then(({ body }) => {
           const { msg } = body;
           expect(msg).toBe("Bad request");
+        });
+    });
+  });
+  describe("/api/comments/:comment_id", () => {
+    test("204 DELETE: should delete selected comment and return no content", () => {
+      const comment_id = 1;
+      return request(app).delete(`/api/comments/${comment_id}`).expect(204);
+    });
+    test("404 DELETE: should return an error when given a comment ID which doesn't exist", () => {
+      const comment_id = 12345;
+      return request(app)
+        .delete(`/api/comments/${comment_id}`)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Comment not found");
+        });
+    });
+    test("400 DELETE: should return an error when passed a comment ID of invalid type", () => {
+      const comment_id = "bananas";
+      return request(app)
+        .delete(`/api/comments/${comment_id}`)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+  });
+  describe("/api/users", () => {
+    test("GET 200: should respond with an array of objects showing all users", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          const { users } = body;
+          expect(users.length).toBe(4);
+          users.forEach((user) => {
+            expect(user).toHaveProperty("username", expect.any(String));
+            expect(user).toHaveProperty("name", expect.any(String));
+            expect(user).toHaveProperty("avatar_url", expect.any(String));
+          });
         });
     });
   });
