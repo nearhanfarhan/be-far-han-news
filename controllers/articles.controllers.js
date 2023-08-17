@@ -1,7 +1,7 @@
 const {
   fetchArticleById,
   fetchAllArticles,
-  updateArticleVotes,
+  updateArticleVotesById,
 } = require("../models/articles.models");
 const { fetchTopic } = require("../models/topics.models");
 
@@ -31,11 +31,11 @@ exports.getAllArticles = (request, response, next) => {
     });
 };
 
-exports.patchArticleVotes = (request, response, next) => {
+exports.patchArticleVotesById = (request, response, next) => {
   const { article_id } = request.params;
   const { inc_votes } = request.body;
   const promises = [
-    updateArticleVotes(article_id, inc_votes),
+    updateArticleVotesById(article_id, inc_votes),
     fetchArticleById(article_id),
   ];
   Promise.all(promises)
