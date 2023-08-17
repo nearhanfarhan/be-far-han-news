@@ -75,9 +75,62 @@ describe("far-han-news tests", () => {
               "article_img_url",
               expect.any(String)
             );
-            expect(article).toHaveProperty("comment_count", expect.any(String));
+            expect(article).toHaveProperty("comment_count", expect.any(Number));
           });
         });
+    });
+    test("GET 200: should accept topic as a filter", () => {
+      return request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200)
+        .then(({ body }) => {
+          const { articles } = body;
+          expect(articles.length).toBe(1);
+          expect(articles[0]).toHaveProperty("topic", "cats");
+        });
+    });
+    test("GET 200: should sort by specified column and order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=comment_count&order=asc")
+        .expect(200)
+        .then(({ body }) => {
+          const { articles } = body;
+          expect(articles).toBeSortedBy("comment_count");
+        });
+    });
+    test("GET 404: should return an error if passed passed a topic which doesn't exist on topic table", () => {
+      return request(app)
+        .get("/api/articles?topic=bananas&order=asc")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Topic not found");
+        });
+    });
+    test('GET 200: should return 200 if filtered by an existing topic with 0 articles', () => {
+      return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        const {articles} = body
+        expect(articles).toEqual([]);
+      });
+
+    });
+    test('GET 400:should return an error if a forbidden sort_by is used', () => {
+      return request(app)
+      .get("/api/articles?sort_by=bananas")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+    });
+    test('GET 400: should return an error if a forbidden order is used', () => {
+      return request(app)
+      .get("/api/articles?order=bananas")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
     });
   });
   describe("/api/articles/:article_id", () => {
