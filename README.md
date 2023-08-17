@@ -23,7 +23,7 @@ If using npm as your package manager, run the command "npm install" in the termi
 
 # Seeding a local database
 
-With PSQL running on your computer, run npm setup-dbs to setup the database, and npm run seed to run the seed and insert data into the database.
+With PSQL running on your computer, run "npm setup-dbs" to setup the database, and "npm run seed" to run the seed and insert data into the database.
 
 # Minimum version requirements
 
