@@ -75,7 +75,7 @@ describe("far-han-news tests", () => {
               "article_img_url",
               expect.any(String)
             );
-            expect(article).toHaveProperty("comment_count", expect.any(String));
+            expect(article).toHaveProperty("comment_count", expect.any(Number));
           });
         });
     });
@@ -95,7 +95,7 @@ describe("far-han-news tests", () => {
         .expect(200)
         .then(({ body }) => {
           const { articles } = body;
-          expect(articles).toBeSortedBy("comment_count", { coerce: true });
+          expect(articles).toBeSortedBy("comment_count");
         });
     });
     test("GET 404: should return an error if passed passed a topic with no results", () => {
