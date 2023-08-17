@@ -421,4 +421,17 @@ describe("far-han-news tests", () => {
         });
     });
   });
+  describe("/api/users/:username", () => {
+    test('GET 200: should return the user with a correct username', () => {
+      const testUser = "rogersop"
+      return request(app).get(`/api/users/${testUser}`).expect(200).then(({body}) => {
+        const {user} = body
+        expect(user).toMatchObject({
+          username: 'rogersop',
+          name: 'paul',
+          avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4'
+        })
+      })
+    });
+  })
 });

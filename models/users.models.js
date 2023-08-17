@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 
-exports.fetchUser = (username) => {
+exports.fetchUserByUsername = (username) => {
   if (!username) {
     return Promise.reject({ status: 400, msg: "Bad request" });
   } else {

@@ -4,7 +4,7 @@ const {
   insertCommentsByArticle,
   removeCommentById,
 } = require("../models/comments.models");
-const { fetchUser } = require("../models/users.models");
+const { fetchUserByUsername } = require("../models/users.models");
 
 exports.getCommentsByArticle = (request, response, next) => {
   const { article_id } = request.params;
@@ -28,7 +28,7 @@ exports.postCommentsByArticle = (request, response, next) => {
   const { author, body } = request.body;
   const { article_id } = request.params;
   const promises = [
-    fetchUser(author),
+    fetchUserByUsername(author),
     fetchArticleById(article_id),
     insertCommentsByArticle(article_id, author, body),
   ];
