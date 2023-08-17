@@ -98,13 +98,23 @@ describe("far-han-news tests", () => {
           expect(articles).toBeSortedBy("comment_count");
         });
     });
-    test("GET 404: should return an error if passed passed a topic with no results", () => {
+    test("GET 404: should return an error if passed passed a topic which doesn't exist on topic table", () => {
       return request(app)
         .get("/api/articles?topic=bananas&order=asc")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Not found");
+          expect(body.msg).toBe("Topic not found");
         });
+    });
+    test('GET 200: should return 200 if filtered by an existing topic with 0 articles', () => {
+      return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        const {articles} = body
+        expect(articles).toEqual([]);
+      });
+
     });
     test('GET 400:should return an error if a forbidden sort_by is used', () => {
       return request(app)

@@ -42,9 +42,6 @@ exports.fetchAllArticles = (topic, sort_by = "created_at", order = "desc") => {
 
   text += `GROUP BY articles.article_id ORDER BY ${sort_by} ${order};`;
   return db.query(text, params).then(({ rows }) => {
-    if (rows.length===0){
-      return Promise.reject({status:404, msg: "Not found"})
-    }
     return rows;
   });
 };
