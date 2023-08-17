@@ -14,3 +14,10 @@ exports.fetchUser = (username) => {
     });
   }
 };
+
+exports.fetchAllUsers = () => {
+  const text = "SELECT * FROM users;";
+  return db.query(text).then(({ rows }) => {
+    return rows;
+  });
+};

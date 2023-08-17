@@ -11,6 +11,7 @@ const { handleCustomErrors, handle400Errors} = require("./errors/errors");
 const { getEndpoints } = require("./controllers/api.controllers");
 
 const { getCommentsByArticle, postCommentsByArticle, deleteCommentById } = require("./controllers/comments.controllers");
+const { getAllUsers } = require("./controllers/users.controllers");
 
 const app = express()
 
@@ -33,6 +34,7 @@ app.patch("/api/articles/:article_id", patchArticleVotes)
 
 app.delete("/api/comments/:comment_id", deleteCommentById)
 
+app.get("/api/users", getAllUsers)
 
 app.use((request, response) => {
   response.status(404).send({ msg: "Not found" });
