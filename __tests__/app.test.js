@@ -380,11 +380,11 @@ describe("far-han-news tests", () => {
     });
   });
   describe("/api/comments/:comment_id", () => {
-    test("204 DELETE: should delete selected comment and return no content", () => {
+    test("DELETE 204: should delete selected comment and return no content", () => {
       const comment_id = 1;
       return request(app).delete(`/api/comments/${comment_id}`).expect(204);
     });
-    test("404 DELETE: should return an error when given a comment ID which doesn't exist", () => {
+    test("DELETE 404: should return an error when given a comment ID which doesn't exist", () => {
       const comment_id = 12345;
       return request(app)
         .delete(`/api/comments/${comment_id}`)
@@ -393,7 +393,7 @@ describe("far-han-news tests", () => {
           expect(body.msg).toBe("Comment not found");
         });
     });
-    test("400 DELETE: should return an error when passed a comment ID of invalid type", () => {
+    test("DELETE 400: should return an error when passed a comment ID of invalid type", () => {
       const comment_id = "bananas";
       return request(app)
         .delete(`/api/comments/${comment_id}`)
@@ -402,6 +402,59 @@ describe("far-han-news tests", () => {
           expect(body.msg).toBe("Bad request");
         });
     });
+    test("PATCH 201: should update the selected comment and return the updated comment", () => {
+      const comment_id = 1;
+      const valueToUpdate = { inc_votes: 1000 };
+      return request(app)
+        .patch(`/api/comments/${comment_id}`)
+        .send(valueToUpdate)
+        .expect(201)
+        .then(({ body }) => {
+          const { comment } = body;
+          expect(comment).toMatchObject({
+            comment_id: 1,
+            body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+            article_id: 9,
+            author: "butter_bridge",
+            votes: 1016,
+            created_at: "2020-04-06T12:17:00.000Z",
+          });
+        });
+    });
+    test("PATCH 404: Should return an error if update of non existent but valid comment_id is attempted", () => {
+      const comment_id = 12352434;
+      const valueToUpdate = { inc_votes: 1000 };
+      return request(app)
+        .patch(`/api/comments/${comment_id}`)
+        .send(valueToUpdate)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Comment not found");
+        });
+    });
+    test("PATCH 400: should return an error if comment_id of invalid type passed", () => {
+      const comment_id = "bananas";
+      const valueToUpdate = { inc_votes: 1000 };
+      return request(app)
+        .patch(`/api/comments/${comment_id}`)
+        .send(valueToUpdate)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+    test("PATCH 400: should return an error if update value of invalid type passed", () => {
+      const comment_id = "bananas";
+      const valueToUpdate = { inc_votes: true };
+      return request(app)
+        .patch(`/api/comments/${comment_id}`)
+        .send(valueToUpdate)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+
   });
   describe("/api/users", () => {
     test("GET 200: should respond with an array of objects showing all users", () => {

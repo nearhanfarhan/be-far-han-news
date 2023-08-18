@@ -3,6 +3,8 @@ const {
   fetchCommentsByArticle,
   insertCommentsByArticle,
   removeCommentById,
+  updateCommentById,
+  fetchCommentById,
 } = require("../models/comments.models");
 const { fetchUserByUsername } = require("../models/users.models");
 
@@ -49,6 +51,25 @@ exports.deleteCommentById = (request, response, next) => {
   removeCommentById(comment_id)
     .then(() => {
       response.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchCommentById = (request, response, next) => {
+  const { comment_id } = request.params;
+  const { inc_votes } = request.body;
+  const promises = [
+    fetchCommentById(comment_id),
+    updateCommentById(comment_id, inc_votes),
+  ];
+  Promise.all(promises)
+    .then((promiseArray) => {
+      return promiseArray[1];
+    })
+    .then((comment) => {
+      response.status(201).send({ comment: comment });
     })
     .catch((err) => {
       next(err);
