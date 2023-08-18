@@ -4,7 +4,7 @@ const {
   updateArticleVotesById,
   insertArticle,
 } = require("../models/articles.models");
-const { fetchTopic } = require("../models/topics.models");
+const { fetchTopic, insertTopic } = require("../models/topics.models");
 const { fetchUserByUsername } = require("../models/users.models");
 
 exports.getArticleById = (request, response, next) => {
@@ -51,13 +51,26 @@ exports.patchArticleVotesById = (request, response, next) => {
 
 exports.postArticle = (request, response, next) => {
   const { author, title, body, topic, article_img_url } = request.body;
-  const promises = [
-    fetchUserByUsername(author),
-    insertArticle(author, title, body, topic, article_img_url),
-  ];
-  Promise.all(promises)
-    .then((promiseArray) => {
-      return promiseArray[1];
+
+  fetchTopic(topic)
+    .then(() => {
+      return fetchUserByUsername;
+    })
+    .catch((err) => {
+      if (err.status === 404) {
+        insertTopic(topic);
+      } else {
+        next(err);
+      }
+    })
+    .then(() => {
+      const promises = [
+        fetchUserByUsername(author),
+        insertArticle(author, title, body, topic, article_img_url),
+      ];
+      return Promise.all(promises).then((promiseArray) => {
+        return promiseArray[1];
+      });
     })
     .then((article) => {
       response.status(201).send({ article: article });
@@ -66,3 +79,35 @@ exports.postArticle = (request, response, next) => {
       next(err);
     });
 };
+
+// exports.postArticle = (request, response, next) => {
+
+//   const { author, title, body, topic, article_img_url } = request.body;
+
+//   fetchTopic(topic).then(()=>{
+//     const promises = [
+//       fetchUserByUsername(author),
+//       insertArticle(author, title, body, topic, article_img_url),
+//     ];
+//     return Promise.all(promises).then((promiseArray)=>{
+//       return promiseArray[1]
+//     })
+//   }).catch((error)=>{
+//     if(error.status===404){
+//       const promises = [
+//         insertTopic(topic), fetchUserByUsername(author),insertArticle(author, title, body, topic, article_img_url),
+//       ]
+//       return Promise.all(promises).then((promiseArray)=>{
+//         return promiseArray[2]
+//       })
+//     } else {
+//       next(error)
+//     }
+//   })
+//     .then((article) => {
+//       response.status(201).send({ article: article });
+//     })
+//     .catch((err) => {
+//       next(err);
+//     });
+// };
