@@ -2,8 +2,10 @@ const {
   fetchArticleById,
   fetchAllArticles,
   updateArticleVotesById,
+  insertArticle,
 } = require("../models/articles.models");
 const { fetchTopic } = require("../models/topics.models");
+const { fetchUserByUsername } = require("../models/users.models");
 
 exports.getArticleById = (request, response, next) => {
   const { article_id } = request.params;
@@ -41,6 +43,24 @@ exports.patchArticleVotesById = (request, response, next) => {
   Promise.all(promises)
     .then((promiseArray) => {
       response.status(201).send({ article: promiseArray[0] });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postArticle = (request, response, next) => {
+  const { author, title, body, topic, article_img_url } = request.body;
+  const promises = [
+    fetchUserByUsername(author),
+    insertArticle(author, title, body, topic, article_img_url),
+  ];
+  Promise.all(promises)
+    .then((promiseArray) => {
+      return promiseArray[1];
+    })
+    .then((article) => {
+      response.status(201).send({ article: article });
     })
     .catch((err) => {
       next(err);

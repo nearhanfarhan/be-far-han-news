@@ -131,6 +131,42 @@ describe("far-han-news tests", () => {
           expect(body.msg).toBe("Bad request");
         });
     });
+    test("POST 201: should add a new article with an existing topic to an existing author", () => {
+      const articleToPost = {
+        author: "butter_bridge",
+        title: "How to make friends",
+        body: "get outside and try",
+        topic: "paper",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(articleToPost)
+        .expect(201)
+        .then(({ body }) => {
+          const { article } = body;
+          expect(article).toMatchObject({
+            ...articleToPost,
+            votes: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+          });
+        });
+    });
+    test('POST 404: should return an error when a non-existent username is used', () => {
+      const articleToPost = {
+        author: "nearhanfarhan",
+        title: "How to make friends",
+        body: "get outside and try",
+        topic: "paper",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(articleToPost)
+        .expect(404).then(({body})=>{
+          expect(body.msg).toBe("Username doesn't exist")
+        })
+
+    });
   });
   describe("/api/articles/:article_id", () => {
     test("GET 200: should get a valid article by its ID", () => {
@@ -454,7 +490,6 @@ describe("far-han-news tests", () => {
           expect(body.msg).toBe("Bad request");
         });
     });
-
   });
   describe("/api/users", () => {
     test("GET 200: should respond with an array of objects showing all users", () => {
