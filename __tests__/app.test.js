@@ -55,6 +55,49 @@ describe("far-han-news tests", () => {
           });
         });
     });
+    test("POST 201: should post a new topic to the topics table", () => {
+      const topicToPost = {
+        slug: "ancient greeks",
+        description: "such democracy",
+      };
+      return request(app)
+        .post("/api/topics")
+        .send(topicToPost)
+        .expect(201)
+        .then(({ body }) => {
+          const { topic } = body;
+          expect(topic).toMatchObject({
+            slug: "ancient greeks",
+            description: "such democracy",
+          });
+        });
+    });
+    test("POST 400: should return an error if attempting to post a topic which already exists", () => {
+      const topicToPost = {
+        slug: "mitch",
+        description: "he's a friendly guy",
+      };
+      return request(app)
+        .post("/api/topics")
+        .send(topicToPost)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+    test("POST 400: should return an error if attempting to post a topic which already exists", () => {
+      const topicToPost = {
+        slug: "mitch",
+        description: "he's a friendly guy",
+      };
+      return request(app)
+        .post("/api/topics")
+        .send(topicToPost)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
   });
   describe("/api/articles", () => {
     test("GET 200: should respond with array of all article objects with desired columns sorted in descending order by date", () => {
@@ -129,6 +172,63 @@ describe("far-han-news tests", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("Bad request");
+        });
+    });
+    test("POST 201: should add a new article with an existing topic to an existing author", () => {
+      const articleToPost = {
+        author: "butter_bridge",
+        title: "How to make friends",
+        body: "get outside and try",
+        topic: "paper",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(articleToPost)
+        .expect(201)
+        .then(({ body }) => {
+          const { article } = body;
+          expect(article).toMatchObject({
+            ...articleToPost,
+            votes: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+          });
+        });
+    });
+    test("POST 201: should insert an article with a new topic if the topic does not already exist", () => {
+      const articleToPost = {
+        author: "butter_bridge",
+        title: "How to make friends",
+        body: "get outside and try",
+        topic: "ancient greek",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(articleToPost)
+        .expect(201)
+        .then(({ body }) => {
+          const { article } = body;
+          expect(article).toMatchObject({
+            author: "butter_bridge",
+            title: "How to make friends",
+            body: "get outside and try",
+            topic: "ancient greek",
+          });
+        });
+    });
+    test("POST 404: should return an error when a non-existent username is used", () => {
+      const articleToPost = {
+        author: "nearhanfarhan",
+        title: "How to make friends",
+        body: "get outside and try",
+        topic: "paper",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(articleToPost)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Username doesn't exist");
         });
     });
   });
@@ -454,7 +554,6 @@ describe("far-han-news tests", () => {
           expect(body.msg).toBe("Bad request");
         });
     });
-
   });
   describe("/api/users", () => {
     test("GET 200: should respond with an array of objects showing all users", () => {
