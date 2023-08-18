@@ -410,7 +410,6 @@ describe("far-han-news tests", () => {
         .send(valueToUpdate)
         .expect(201)
         .then(({ body }) => {
-          console.log({body})
           const { comment } = body;
           expect(comment).toMatchObject({
             comment_id: 1,
