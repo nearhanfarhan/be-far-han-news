@@ -106,31 +106,30 @@ describe("far-han-news tests", () => {
           expect(body.msg).toBe("Topic not found");
         });
     });
-    test('GET 200: should return 200 if filtered by an existing topic with 0 articles', () => {
+    test("GET 200: should return 200 if filtered by an existing topic with 0 articles", () => {
       return request(app)
-      .get("/api/articles?topic=paper")
-      .expect(200)
-      .then(({ body }) => {
-        const {articles} = body
-        expect(articles).toEqual([]);
-      });
-
+        .get("/api/articles?topic=paper")
+        .expect(200)
+        .then(({ body }) => {
+          const { articles } = body;
+          expect(articles).toEqual([]);
+        });
     });
-    test('GET 400:should return an error if a forbidden sort_by is used', () => {
+    test("GET 400:should return an error if a forbidden sort_by is used", () => {
       return request(app)
-      .get("/api/articles?sort_by=bananas")
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Bad request");
-      });
+        .get("/api/articles?sort_by=bananas")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
     });
-    test('GET 400: should return an error if a forbidden order is used', () => {
+    test("GET 400: should return an error if a forbidden order is used", () => {
       return request(app)
-      .get("/api/articles?order=bananas")
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Bad request");
-      });
+        .get("/api/articles?order=bananas")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
     });
   });
   describe("/api/articles/:article_id", () => {
@@ -155,14 +154,13 @@ describe("far-han-news tests", () => {
     });
     test("GET 200: returned objects should contain comment_count as a column", () => {
       return request(app)
-      .get("/api/articles/1")
-      .expect(200)
-      .then(({ body }) => {
-        const { article } = body;
-        expect(article).toHaveProperty("comment_count")
-      })
-
-    })
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body }) => {
+          const { article } = body;
+          expect(article).toHaveProperty("comment_count");
+        });
+    });
     test("GET 404: should return an error when passed an non existent ID of the correct type", () => {
       return request(app)
         .get("/api/articles/9999")
@@ -422,16 +420,29 @@ describe("far-han-news tests", () => {
     });
   });
   describe("/api/users/:username", () => {
-    test('GET 200: should return the user with a correct username', () => {
-      const testUser = "rogersop"
-      return request(app).get(`/api/users/${testUser}`).expect(200).then(({body}) => {
-        const {user} = body
-        expect(user).toMatchObject({
-          username: 'rogersop',
-          name: 'paul',
-          avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4'
-        })
-      })
+    test("GET 200: should return the user with a correct username", () => {
+      const testUser = "rogersop";
+      return request(app)
+        .get(`/api/users/${testUser}`)
+        .expect(200)
+        .then(({ body }) => {
+          const { user } = body;
+          expect(user).toMatchObject({
+            username: "rogersop",
+            name: "paul",
+            avatar_url:
+              "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
+          });
+        });
     });
-  })
+    test("GET 404: should return an error if passed a username which does not exist", () => {
+      const testUser = "nearhanfarhan";
+      return request(app)
+        .get(`/api/users/${testUser}`)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Username doesn't exist");
+        });
+    });
+  });
 });
