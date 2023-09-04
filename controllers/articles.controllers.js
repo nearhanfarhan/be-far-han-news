@@ -53,9 +53,6 @@ exports.postArticle = (request, response, next) => {
   const { author, title, body, topic, article_img_url } = request.body;
 
   fetchTopic(topic)
-    .then(() => {
-      return fetchUserByUsername;
-    })
     .catch((err) => {
       if (err.status === 404) {
         insertTopic(topic);
